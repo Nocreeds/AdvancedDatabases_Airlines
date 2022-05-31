@@ -1,24 +1,9 @@
-const express = require('express');
-const axios = require('axios');
-const RedisClient = require('redis').createClient();
-let i = 0;
+var map = L.map('map').setView([51.505, -0.09], 13);
 
-const app = express();
-app.use(express.json());
-app.use(express.static('www'));
-async function fetchData() {
-    const reply = await axios.get('https://opensky-network.org/api/states/all');
-    const data = JSON.stringify(reply.data.states);
-    console.log(data.length);
-    // redisStore(data); 
-}
+var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
 
-// async function redisStore(data) {
-//     await RedisClient.connect();
-//     await RedisClient.set(`pos${i}`, data);
-//     RedisClient.disconnect();
-//     console.log(`Data written`);
-//     i++;
-// }
-setInterval(fetchData, 1200);
-app.listen(5000);
+var marker = L.marker([51.5, -0.09]).addTo(map);
+
