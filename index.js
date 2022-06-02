@@ -9,6 +9,7 @@
 
 const express = require('express');
 const axios = require('axios');
+const airPlaneInfo= require('./airPlaneInfo');
 
 
 
@@ -34,3 +35,4 @@ async function readdata(){
     }
 readdata();
 app.listen(3000)
+
