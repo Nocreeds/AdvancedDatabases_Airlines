@@ -6,10 +6,8 @@
 // }).addTo(map);
 
 // var marker = L.marker([51.5, -0.09]).addTo(map);
-
 const express = require('express');
 const axios = require('axios');
-const airPlaneInfo= require('./airPlaneInfo');
 
 
 
@@ -18,7 +16,6 @@ const airPlaneInfo= require('./airPlaneInfo');
 // let i = 0;
 
 const mongoURI = 'mongodb+srv://read:a123456@cluster0.3ju38.mongodb.net/?retryWrites=true&w=majority';
-// const mongoURI = 'mongodb://localhost:27017';
 const { MongoClient } = require('mongodb');
 const { timeout } = require('nodemon/lib/config');
 const client = new MongoClient(mongoURI);
@@ -34,5 +31,7 @@ async function readdata(){
     console.log(locations);
     }
 readdata();
+
+
 app.listen(3000)
 
