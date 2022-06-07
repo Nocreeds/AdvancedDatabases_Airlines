@@ -4,6 +4,7 @@ const cors = require("cors");
 const port = process.env.PORT | 3001;
 const express = require('express');
 const app = express();
+const RedisClient = require('redis').createClient();
 
 
 mongoose.connect("mongodb+srv://read:a123456@cluster0.3ju38.mongodb.net/airline");
@@ -47,6 +48,18 @@ StateModel.findOne({},'lat lon', (err, result) => {
         console.log(result);
     }
 });
+
+
+
+async function redisStore() {
+    await RedisClient.connect();
+    // await RedisClient.set(`pos${i}`,data);
+    RedisClient.disconnect();
+    console.log(`Connected to redis!!`);
+    // i++;
+}
+
+redisStore();
 
 app.listen(port, ()=> {
     console.log("Running...",port);
