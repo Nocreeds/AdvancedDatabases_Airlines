@@ -1,18 +1,37 @@
-const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const StateModel = require("./models/States");
 const cors = require("cors");
+const port = process.env.PORT | 3001;
+const express = require('express');
+const app = express();
 
-app.use(express.json);
-app.use(cors());
+
 mongoose.connect("mongodb+srv://read:a123456@cluster0.3ju38.mongodb.net/airline");
 
+app.use(cors());
+app.use(express.json());
 
-app.get("/getLoc", (req, res)=>{
-    console.log("getting all loc")
+
+app.get('/', async (req, res) => {
+    res.send('hello world')
+  })
+
+
+app.get("/getOne", async (req, res)=>{
+    console.log("getting One loc")
     StateModel.findOne({},'lat lon', (err, result) => {
-        if(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+app.get("/getAll", async (req, res)=>{
+    console.log("getting all loc")
+    StateModel.find({},'lat lon', (err, result) => {
+        if (err) {
             console.log(err);
         } else {
             res.json(result);
@@ -28,6 +47,7 @@ StateModel.findOne({},'lat lon', (err, result) => {
         console.log(result);
     }
 });
-app.listen(3001, ()=> {
-    console.log("Running...");
+
+app.listen(port, ()=> {
+    console.log("Running...",port);
 });

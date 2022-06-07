@@ -7,37 +7,48 @@ import {
   Popup
 } from 'react-leaflet';
 import {useState, useEffect} from "react";
-import 'leaflet/dist/leaflet.css';
+
 import './App.css'
 import  Axios from "axios";
 
 function App() {
-  const [coordinate, Setcoordinate] = useState([]);
+  const [Coordinate, setCoordinate] = useState([]);
   useEffect(()=>{
-    Axios.get("http://localhost:3001/getLoc").then((respone) =>{
-      Setcoordinate(respone.data);
-    });
+    const fetchItems = async () => {
+      const result = await Axios(
+        "http://localhost:3001/getOne"
+      );
+      setCoordinate(result.data);
+      console.log(result.data);
+    };
+    fetchItems();
   }, []);
-  console.log("oof",coordinate);
+  console.log("oof",Coordinate);
 
 
   return (
     
-    <MapContainer center={[51.505, -0.09]} zoom={13} style = {{height: '100vh', width:'100wh'}}>
+    <MapContainer center={[51.5, 7.962935164168075]} zoom={13} style = {{height: '100vh', width:'100wh'}}>
   <TileLayer
     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
   />
-  {coordinate.map(cor =>{
-    
-    <Marker position={[coordinate.lat, coordinate.lon]}>
-    <Popup>
-      A pretty CSS3 popup. <br /> Easily customizable.
-    </Popup>
-  </Marker>
 
-  })}
-  
+ { [Coordinate].map(cor =>{
+      console.log("Marker posi", cor.lat,cor.lon);       
+      <Marker position={[cor.lat, cor.lon]}>
+        <Popup>
+        A pretty CSS3 popup. <br /> Easily customizable.
+        </Popup>
+      </Marker>
+  })
+ 
+ }
+  <Marker position={[0, 0]}>
+        <Popup>
+        A pretty CSS3 popup. <br /> Static marker for test.
+        </Popup>
+      </Marker>
 </MapContainer>
   );
 }
