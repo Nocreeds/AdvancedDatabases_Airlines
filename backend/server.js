@@ -51,15 +51,15 @@ StateModel.findOne({},'lat lon', (err, result) => {
 
 
 
-async function redisStore() {
-    await RedisClient.connect();
-    // await RedisClient.set(`pos${i}`,data);
-    RedisClient.disconnect();
-    console.log(`Connected to redis!!`);
-    // i++;
-}
+// async function redisStore() {
+//     await RedisClient.connect();
+//     // await RedisClient.set(`pos${i}`,data);
+//     RedisClient.disconnect();
+//     console.log(`Connected to redis!!`);
+//     // i++;
+// }
 
-redisStore();
+// redisStore();
 
 app.listen(port, ()=> {
     console.log("Running...",port);
