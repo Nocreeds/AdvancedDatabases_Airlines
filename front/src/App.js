@@ -6,6 +6,7 @@ import {
   Marker,
   Popup
 } from 'react-leaflet';
+import L from "leaflet"
 import {useState, useEffect} from "react";
 
 import './App.css'
@@ -44,13 +45,22 @@ function App() {
   })
  
  }
-  <Marker position={[0, 0]}>
+  <Marker position={[0, 0]} icon={GetIcon()}>
         <Popup>
         A pretty CSS3 popup. <br /> Static marker for test.
         </Popup>
       </Marker>
 </MapContainer>
   );
+}
+
+function GetIcon()
+{
+  return L.icon({
+    iconUrl:require("./Icons/plane.png"),
+    iconSize:[40],
+    iconAnchor:[20,0]
+  });
 }
 
 export default App;
