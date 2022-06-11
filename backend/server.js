@@ -40,6 +40,32 @@ app.get("/getAll", async (req, res)=>{
     });
 });
 
+app.get("/getAllLimit", async (req, res)=>{
+    console.log("getting all loc")
+    StateModel.aggregate(
+        [
+            {"$group": { "_id": { icao24: "$icao24", lat: "$lat", lon: "$lon" } } }
+        ]
+    , (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    }).limit(10);
+});
+
+app.get("/getAllLimit20", async (req, res)=>{
+    console.log("getting all loc")
+    StateModel.find({},'lat lon', (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    }).limit(20);
+});
+
 
 StateModel.findOne({},'lat lon', (err, result) => {
     if(err) {
@@ -59,7 +85,7 @@ async function redisStore() {
     // i++;
 }
 
-redisStore();
+// redisStore();
 
 app.listen(port, ()=> {
     console.log("Running...",port);
