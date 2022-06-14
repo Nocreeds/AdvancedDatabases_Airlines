@@ -66,6 +66,65 @@ app.get("/getAllLimit20", async (req, res)=>{
     }).limit(20);
 });
 
+app.get("/getTestIcaoSinglePlane", async (req, res)=>{
+    console.log(req.query.timeStamp);
+    StateModel.find({'icao24' : "a5669f", 'time' : req.query.timeStamp},'lat lon time velocity heading lastcontact', (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    }).limit(20);
+});
+
+app.get("/getAllAirplanesByTime", async (req, res)=>{
+    const timeStamp = req.query.timeStamp;
+    console.log(timeStamp);
+    StateModel.aggregate(
+        [
+            { "$match": { "time": {$eq: timeStamp } } },
+            { "$group": { "_id": { icao24: "$icao24", lat: "$lat", lon: "$lon", time:"$time", velocity:"$velocity", heading:"$heading" } } }
+        ]
+    , (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    }).limit(10);
+});
+
+app.get("/getSelectedPlanesByTime", async (req, res)=>{
+    const timeStamp = req.query.timeStamp;
+    console.log(timeStamp);
+    StateModel.find(
+        { $or: 
+            [ 
+                { icao24: "a5669f"}, 
+                { icao24: "a51738"}, 
+                { icao24: "ac75a5"}, 
+                { icao24: "4d0021"},
+                { icao24: "ace2a7"},
+                { icao24: "e48799"},
+                { icao24: "aa2bc1"},
+                { icao24: "151daa"},
+                { icao24: "a6cc45"},
+                { icao24: "ac7b1b"},
+            ],
+            $and:
+            [
+                {time: timeStamp}
+            ]
+        }, 
+    'icao24 lat lon time velocity heading lastcontact', (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    }).limit(20).sort({icao24: 1});
+});
+
 
 StateModel.findOne({},'lat lon', (err, result) => {
     if(err) {
