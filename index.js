@@ -12,7 +12,7 @@ const uri = 'bolt://localhost:7687';
 const user = 'neo4j';
 const password = 'admin';
 const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
-
+//This is where I start the express server
 app.get('/nodes', async (req, res) => {
     const session = driver.session();
     const ses = await session.run("MATCH (n) Return n ");
