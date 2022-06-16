@@ -20,20 +20,7 @@ app.use(express.json());
 let i=0;
 var k=0;
 
-async function fetchData(t,icao) {
-    var lat;
-    var lon;
-    var vel;
-   
 
-    var config = {
-      method: 'get',
-      url: `https://opensky-network.org/api/states/all?time=${t}&icao24=${icao}`,
-      headers: { 
-        'Authorization': 'Basic RkFIOnNEcWJTaTQ3TWdSWkd3bSE=', 
-        'Cookie': 'XSRF-TOKEN=20f4e405-ceca-49da-87cd-ead964d0994f'
-      }
-    };
   
 
 
