@@ -16,8 +16,8 @@ const airlon = 8.6821;
 const unit = "K";
 app.use(express.json());
 let i=0;
-// var k=Math.floor(Math.random()*1);
 var k=0;
+
 
 
 
@@ -49,9 +49,9 @@ async function fetchData(t,icao) {
         var result2 = JSON.parse(result);
         console.log(result2);
         redisStore(result2); 
-        k++;
-        return result2;
         
+        return result2;
+       
      
     //   console.log("arrivalTime  "+arrival);
     //   console.log(result);
@@ -72,8 +72,8 @@ var time= 1458565000;
         time=time-10;
        // console.log("time"+time);
         fetchData(time,ic);
-        k++;
-        console.log(k);
+       
+        // console.log(k);
     }
 
 
@@ -109,9 +109,8 @@ async function redisStore(data) {
     await RedisClient.connect();
     await RedisClient.set(`pos${i}`,a);
     RedisClient.disconnect();
-    console.log(`pos${i} Data written`);
+   // console.log(`pos${i} Data written`);
     i++;
-
 }
 
 async function mongoWriteData(data){
@@ -148,29 +147,47 @@ async function mongoWriteData(data){
 
 setInterval(getdata, 1000);
 
+function incrK(){
+    console.log(k)
+    return (k=k+1);
+
+}
+
+
 
 // setInterval(incK,1000);
 
+
+
 setInterval(storeToMongo, 3000);
+
 
 
 app.get('/arrTime', async (req, res) => {
     await RedisClient.connect();
     const posStack = [];
-    let positionData={};  
     let len = 0;
+    
+    
+    
     const response = await RedisClient.keys('*');
     len = response.length;
     for (let x = 0; x < response.length; x++) {
         const position = JSON.parse(await RedisClient.get(`pos${x}`))
-        posStack.push(position)
+        posStack.push(position);
     }
-    
-    
-    //res.json({time:posStack[0].arrivalTime,lat:posStack[0].lat,lon:posStack[0].lon,icao:posStack[0].icao});
-    
+
+
+
     res.json({time:posStack[k].arrivalTime,lat:posStack[k].lat,lon:posStack[k].lon,icao:posStack[k].icao});
+
+
     RedisClient.disconnect();
+  
+    setInterval(incrK,7000);
+
+       
+
 }
 )
 
@@ -181,8 +198,7 @@ app.get('/arrTime', async (req, res) => {
 
 
 
-
-app.listen(3001)
+app.listen(3000)
 
 
 
