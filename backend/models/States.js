@@ -21,4 +21,6 @@ const StateSchema = new mongoose.Schema({
 
 const StateModel = mongoose.model("master", StateSchema , "master");
 
+StateModel.collection.createIndex({time:1, icao24: 1} , {unique:true});
+    
 module.exports = StateModel

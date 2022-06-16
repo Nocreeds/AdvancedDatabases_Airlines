@@ -7,23 +7,30 @@ import {
   Popup
 } from 'react-leaflet';
 import {useState, useEffect} from "react";
-
 import './App.css'
 import  Axios from "axios";
+import MarkerPos from './MapComp/MarkerPos'
 
 function App() {
   const [Coordinate, setCoordinate] = useState([]);
+  const fetchItems = async () => {
+    const result = await Axios(
+     "http://localhost:3001/live"
+   ); 
+   setCoordinate(result.data);
+   console.log(result.data)
+ };
   useEffect(()=>{
-    const fetchItems = async () => {
-      const result = await Axios(
-        "http://localhost:3001/getOne"
-      );
-      setCoordinate(result.data);
-      console.log(result.data);
-    };
     fetchItems();
+    const interval = setInterval(() => {
+      fetchItems();
+      console.log('This will be called every 30 seconds');
+    }, 60000);
+  
+    return () => clearInterval(interval);
+    
   }, []);
-  console.log("oof",Coordinate);
+  
 
 
   return (
@@ -34,21 +41,8 @@ function App() {
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
   />
 
- { [Coordinate].map(cor =>{
-      console.log("Marker posi", cor.lat,cor.lon);       
-      <Marker position={[cor.lat, cor.lon]}>
-        <Popup>
-        A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
-  })
- 
- }
-  <Marker position={[0, 0]}>
-        <Popup>
-        A pretty CSS3 popup. <br /> Static marker for test.
-        </Popup>
-      </Marker>
+  <MarkerPos Coordinate={Coordinate} />
+  
 </MapContainer>
   );
 }
