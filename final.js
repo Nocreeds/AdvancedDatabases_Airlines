@@ -1,10 +1,14 @@
 const express = require('express');
 const axios = require('axios');
+const mongoURI = 'mongodb://localhost:27017';
+const { MongoClient } = require('mongodb');
+//const { mongo } = require('mongoose');
 const { timeout } = require('nodemon/lib/config');
 const { stringify } = require('nodemon/lib/utils');
 const { json } = require('express/lib/response');
 const app = express();
 const RedisClient = require('redis').createClient();
+const client = new MongoClient(mongoURI);
 
 
 const airlat=50.1109;
@@ -20,7 +24,6 @@ async function fetchData(t,icao) {
     var lat;
     var lon;
     var vel;
-//3c6444
     var config = {
       method: 'get',
       url: `https://opensky-network.org/api/states/all?time=${t}&icao24=${icao}`,
@@ -39,20 +42,42 @@ async function fetchData(t,icao) {
       redisStore(arrival); 
     })
     .catch(function (error) {
-      //console.log(error);
     });
-
-   
-
-    
-    
 }
+
+function getarrtime(){
+      var config = {
+        method: 'get',
+        url: 'https://airlabs.co/api/v9/schedules?dep_iata=MIA&api_key=f08f7b53-93f7-45dc-80be-f2352183a392',
+        headers: {    
+          'Authorization': 'Basic RkFIOnNEcWJTaTQ3TWdSWkd3bSE='
+
+        }
+      };
+      axios(config)
+      .then(function (response) {
+        artime=JSON.stringify(response.data.response[0].arr_time_ts);
+        console.log("------------------------------------");
+        console.log("----------Airline Details-----------");
+        console.log("------------------------------------");
+        console.log(artime +"->Estimated arrival Time")
+    
+      })
+    
+      .catch(function (error) {
+    
+        console.log(error);
+    
+      });
+    }
+    getarrtime()
+
+
 var time= 1655229723;
 
     function getdata(){
         
         var ic= "3c65c6";
-     
         time=time-10;
         fetchData(time,ic);
 
@@ -89,48 +114,50 @@ async function redisStore(data) {
     await RedisClient.set(`pos${i}`,data);
     var a=await RedisClient.get(`pos${i}`);
     RedisClient.disconnect();
-    console.log(`pos${i} Data written`);
-    console.log(a);
+    //console.log(`pos${i} Data written`);
+    console.log(a +"-> Estimated Time required");
 
     i++;
-    console.log(a);
+    //console.log(a);
     var b = 1655256120 - 1655232929;
     if(b > 0 ){
-            console.log("Delay");
+            console.log("Flight will be Delayed");
         }
         else {
             console.log("Flight on Time");
-        }
+        }console.log("-----------------------------------------------------")
    
 }
-
 async function mongoWriteData(data){
-    var time=data;
-    await client.connect();
-    const db = client.db('ArrivalTime_tracking');
-    const coll = db.collection('ArrivalTime');
-    const locations = await coll.insertOne({arrival:time});
-    }
+  var time=data;
+  await client.connect();
+  const db = client.db('airlines');
+  const coll = db.collection('ArrivalTime');
+  const locations = await coll.insertOne({arrival:time});
+  }
 
 
-    async function storeToMongo() {
-        await RedisClient.connect();
-    // const reply = await RedisClient.get('pos0');
-    // const data = JSON.parse(reply);
-        const posStack = [];
-        const response = await RedisClient.keys('*');
-        for (let x = 0; x < response.length; x++) {
-            const position = JSON.parse(await RedisClient.get(`pos${x}`));
-            // console.log(position);
-            posStack.push(position)
-        }
-        posStack.forEach((data)=>{
-            mongoWriteData(data)
-            // console.log(data);
-        })
-    
-      RedisClient.disconnect();
-        }
+  async function storeToMongo() {
+      await RedisClient.connect();
+      // const reply = await RedisClient.get('pos0');
+      // const data = JSON.parse(reply);
+      const posStack = [];
+      const response = await RedisClient.keys('*');
+          for (let x = 0; x < response.length; x++) {
+              const position = JSON.parse(await RedisClient.get(`pos${x}`));
+              console.log(`position${x} = Arrival: ${position}`);
+              posStack.push(position)
+          }
+          posStack.forEach((data)=>{
+              mongoWriteData(data)
+              console.log("arrivalTime"+data);
+          })
+  
+  
+    RedisClient.disconnect();
+     
+  }
+  setTimeout(storeToMongo, 10000);
 setInterval(getdata, 1200);
-setInterval(storeToMongo, 10000);
+setInterval(storeToMongo, 3000);
 app.listen(3000)
