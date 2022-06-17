@@ -110,6 +110,11 @@ app.get("/getSelectedPlanesByTime", async (req, res)=>{
                 { icao24: "151daa"},
                 { icao24: "a6cc45"},
                 { icao24: "ac7b1b"},
+                { icao24: "7380cb"},
+                { icao24: "c0174d"},
+                { icao24: "71be17"},
+                { icao24: "aad249"},
+                { icao24: "aaf4bd"},
             ],
             $and:
             [
