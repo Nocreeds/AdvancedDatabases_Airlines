@@ -52,4 +52,14 @@ app.post('/query3', async (req, res) => {
     res.json(reply);
  })
 
+ app.post('/query4', async (req, res) => {
+    const {days} = req.body;
+    const session = driver.session();
+    const var3 = await session.run(`Match (d:DAYS) WHERE d.dayofweek = '${days}' return avg(d.Evening_booking)`)
+    console.log(var3.records[0]);
+    const reply = var3.records[0]._fields[0].low;
+    res.json(reply);
+ })
+
+
 app.listen(3000);
