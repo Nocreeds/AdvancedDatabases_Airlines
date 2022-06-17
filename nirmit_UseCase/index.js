@@ -44,7 +44,7 @@ async function fetchData(t,icao) {
       lon=JSON.stringify(response.data.states[0][6]);
       vel =JSON.stringify(response.data.states[0][9])
         var arrival = GetRemainingTimeOfArrival(lat,lon,airlat,airlon,vel*3.6)
-            var result = JSON.stringify({ "arrivalTime": `${arrival}`, "lat": `${lat}`, "lon": `${lon}`, "icao": `${icao}`, "velocity": `${vel}`});
+            var result = JSON.stringify({ "timeToReachDestination": `${arrival}`, "lat": `${lat}`, "lon": `${lon}`, "icao": `${icao}`, "velocity": `${vel}`});
         var result2 = JSON.parse(result);
         console.log(result2);
         redisStore(result2); 
@@ -61,6 +61,7 @@ async function fetchData(t,icao) {
     
 }
 
+fetchData(1655412449, 'a21b74');
 
 function GetRemainingTimeOfArrival(latitudeOfAirplane, longitudeOfAirplane, latitudeDestination, longitudeDestination, speedOfAirplane)
 {
@@ -98,8 +99,6 @@ function deg2rad(deg)
 }
 
 
-
-fetchData(1655412449, 'a21b74');
 
 
 app.get('/arrTime', async (req, res) => {
