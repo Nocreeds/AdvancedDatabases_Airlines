@@ -29,7 +29,7 @@ function getRandomInt(max) {
 const GET_ASYNC = promisify(client.get).bind(client)
 const SET_ASYNC = promisify(client.set).bind(client)
 
-mongoose.connect("mongodb+srv://write:a123456@cluster0.3ju38.mongodb.net/airline");
+mongoose.connect("mongodb+srv://read:a123456@cluster0.3ju38.mongodb.net/airline");
 
 app.use(cors());
 app.use(express.json());
@@ -77,10 +77,11 @@ app.get('/live', async (req, res) => {
           return
         }
         var url = 'https://opensky-network.org/api/states/all'; //Include the protocol here (https://)
-        $.when($.getJSON(url)).done(function(data) {
+        $.when($.getJSON(url)).done(async function(data) {
 
 /*             $.each(data.states, function(i, value) {
-                StateModel.collection.insertOne({
+            try{
+                await StateModel.collection.insertOne({
                     time : value[3],
                     icao24 : value[0],
                     lat : value[6],
@@ -98,6 +99,7 @@ app.get('/live', async (req, res) => {
                     lastposupdate : value[4],
                     lastcontact :value[4],
                 })
+            } catch(err) {}
             }); */
             const saveResult = SET_ASYNC(
                 'live',

@@ -20,7 +20,14 @@ const StateSchema = new mongoose.Schema({
 });
 
 const StateModel = mongoose.model("master", StateSchema , "master");
+const unique = async()=>{
+    try{
+    await StateModel.collection.createIndex({time:1, icao24: 1} , {unique:true});
+}
+catch(err){
+    console.log("no write access")
+}}
+unique();
 
-StateModel.collection.createIndex({time:1, icao24: 1} , {unique:true});
-    
+
 module.exports = StateModel
